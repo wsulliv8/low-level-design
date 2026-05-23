@@ -52,3 +52,7 @@ void ParkingLot::removeVehicle(const std::string& licensePlate) {
   levels[spot->getFloorNumber()]->returnSpot(spot);
   occupiedSpots.erase(it);
 }
+
+int main() {
+  return 0;
+}

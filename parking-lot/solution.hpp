@@ -54,12 +54,12 @@ public:
 
 class ParkingSpot {
 private:
-  std::string currentLicensePlate;
   VehicleType type;
+  size_t id;
   size_t floorNumber;
+  std::string currentLicensePlate;
 
   inline static std::atomic<size_t> global_id {0};
-  size_t id;
 public:
   ParkingSpot(VehicleType t, size_t fn) : type(t), id(global_id++), floorNumber(fn), currentLicensePlate("") {}
 
@@ -113,7 +113,7 @@ private:
 public:
   ParkingLot(size_t numLevels, const FloorConfig& fc) : floorConfig{fc} {
     levels.reserve(numLevels);
-    for (auto i = 0; i < numLevels; ++i) {
+    for (size_t i = 0; i < numLevels; ++i) {
       levels.push_back(std::make_unique<ParkingLevel>(i, floorConfig));
     }
   };
