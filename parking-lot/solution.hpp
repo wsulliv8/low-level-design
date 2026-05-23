@@ -65,6 +65,7 @@ public:
 
   size_t getId() const { return id; }
   VehicleType getType() const {return type;}
+  size_t getFloorNumber() const { return floorNumber; }
 
   bool isEmpty() const { return currentLicensePlate == ""; }
   void assignVehicle(const std::string& lp) { currentLicensePlate = lp; };
@@ -97,7 +98,7 @@ public:
   }
 
   bool isFull(VehicleType type) const { return freeSpots.at(type).empty(); }
-  ParkingSpot* findAndOccupySpot(VehicleType type);
+  ParkingSpot* findAndOccupySpot(const Vehicle& vehicle);
   void returnSpot(ParkingSpot* spot);
 };
 
@@ -108,6 +109,7 @@ private:
   std::vector<std::unique_ptr<ParkingLevel>> levels;
   std::unordered_map<std::string, ParkingSpot*> occupiedSpots;
   
+  std::mutex glob_m;
 public:
   ParkingLot(size_t numLevels, const FloorConfig& fc) : floorConfig{fc} {
     levels.reserve(numLevels);
@@ -116,6 +118,6 @@ public:
     }
   };
 
-  bool parkVehicle(Vehicle& vehicle);
-  bool removeVehicle(const std::string& licensePlate);
+  bool parkVehicle(const Vehicle& vehicle);
+  void removeVehicle(const std::string& licensePlate);
 };
