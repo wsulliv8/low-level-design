@@ -73,12 +73,10 @@ private:
   Document &document;
   char deletedChar{'\0'};
   size_t row, col;
-  std::shared_ptr<const StyleKey> style;
 
 public:
-  DeleteCommand(Document &d, size_t r, size_t cl,
-                std::shared_ptr<const StyleKey> s)
-      : document(d), row(r), col(cl), style(s) {};
+  DeleteCommand(Document &d, size_t r, size_t cl)
+      : document(d), row(r), col(cl) {};
 
   void execute() override;
   void undo() override;
@@ -106,8 +104,10 @@ private:
   Cursor cursor;
   mutable std::mutex docMtx;
 
+  size_t rows, cols;
+
 public:
-  Document() {
+  Document(size_t r, size_t c) : rows(r), cols(c) {
     lines.emplace_back("");
     styles.emplace_back(std::vector<std::shared_ptr<const StyleKey>>());
   };
@@ -115,7 +115,7 @@ public:
   void setCursor(size_t r, size_t c);
   Cursor getCursor() const { return cursor; }
 
-  void insertAt(size_t r, size_t c, char ch, const StyleKey &sk);
+  void insertAt(size_t r, size_t c, char ch, std::shared_ptr<const StyleKey>);
   char deleteAt(size_t r, size_t c);
   void applyStyleToRange(size_t r1, size_t c1, size_t r2, size_t c2,
                          const StyleKey &sk);
@@ -130,6 +130,8 @@ private:
   std::mutex editorMtx;
 
 public:
+  TextEditor(size_t r, size_t c) : document(r, c) {}
+
   void run();
   void handleTypeKey(char ch, TextStyle ts, size_t s, uint32_t c);
   void handleBackspace();
